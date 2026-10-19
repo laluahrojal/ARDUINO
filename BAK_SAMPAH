@@ -1,0 +1,57 @@
+#include <Servo.h>
+
+const int TRIGPIN = 8;
+const int ECHOPIN = 9;
+const int LEDPIN = 13;
+const int SERVOPIN = 6;
+
+long timer;
+int jarak;
+
+Servo myServo;
+
+void setup()
+{
+  Serial.begin(9600);
+
+  pinMode(ECHOPIN, INPUT);
+  pinMode(TRIGPIN, OUTPUT);
+  pinMode(LEDPIN, OUTPUT);
+
+  myServo.attach(SERVOPIN);
+  myServo.write(0);
+}
+
+void loop()
+{
+  // Mengirim sinyal ultrasonik
+  digitalWrite(TRIGPIN, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(TRIGPIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIGPIN, LOW);
+
+  // Menghitung waktu pantulan dan jarak
+  timer = pulseIn(ECHOPIN, HIGH);
+  jarak = timer / 58;
+
+  // Menampilkan jarak
+  Serial.print("Jarak = ");
+  Serial.print(jarak);
+  Serial.println(" cm");
+
+  // Mengontrol LED dan servo
+  if (jarak > 10)
+  {
+    digitalWrite(LEDPIN, HIGH);
+    myServo.write(180);
+  }
+  else
+  {
+    digitalWrite(LEDPIN, LOW);
+    myServo.write(0);
+  }
+
+  delay(3000);
+}
